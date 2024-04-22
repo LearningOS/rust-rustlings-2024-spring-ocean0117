@@ -16,18 +16,41 @@
 //
 // Execute `rustlings hint quiz3` or use the `hint` watch subcommand for a hint.
 
-// I AM NOT DONE
+// 定义一个 Trait 来返回成绩的字符串表示
+pub trait DisplayGrade {
+    fn display(&self) -> String;
+}
 
-pub struct ReportCard {
-    pub grade: f32,
+// 使报告卡结构体支持泛型参数 T
+pub struct ReportCard<T: DisplayGrade> {
+    pub grade: T,
     pub student_name: String,
     pub student_age: u8,
 }
 
-impl ReportCard {
+// 实现 ReportCard 的打印功能，使用 display 方法来获取成绩的字符串表示
+impl<T: DisplayGrade> ReportCard<T> {
     pub fn print(&self) -> String {
-        format!("{} ({}) - achieved a grade of {}",
-            &self.student_name, &self.student_age, &self.grade)
+        format!(
+            "{} ({}) - achieved a grade of {}",
+            &self.student_name,
+            &self.student_age,
+            self.grade.display()
+        )
+    }
+}
+
+// 为 f32 类型实现 DisplayGrade trait，以便可以返回数字成绩的字符串表示
+impl DisplayGrade for f32 {
+    fn display(&self) -> String {
+        self.to_string()
+    }
+}
+
+// 为 &str 类型实现 DisplayGrade trait，以便可以返回字母成绩的字符串表示
+impl DisplayGrade for &str {
+    fn display(&self) -> String {
+        self.to_string()
     }
 }
 
@@ -50,9 +73,9 @@ mod tests {
 
     #[test]
     fn generate_alphabetic_report_card() {
-        // TODO: Make sure to change the grade here after you finish the exercise.
+        // 修改 grade 为字母评分
         let report_card = ReportCard {
-            grade: 2.1,
+            grade: "A+",
             student_name: "Gary Plotter".to_string(),
             student_age: 11,
         };
